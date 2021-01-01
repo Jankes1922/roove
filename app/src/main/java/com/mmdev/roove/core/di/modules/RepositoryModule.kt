@@ -65,7 +65,6 @@ class RepositoryModule {
 	fun conversationsRepository(repository: ConversationsRepositoryImpl): ConversationsRepository = repository
 
 	@Provides
-	@Singleton
 	fun pairsRepository(repository: PairsRepositoryImpl): PairsRepository = repository
 
 	@Provides

@@ -18,6 +18,7 @@
 
 package com.mmdev.business.conversations
 
+import com.mmdev.business.user.UserItem
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 
@@ -32,5 +33,7 @@ interface ConversationsRepository {
 	fun getConversationsList(): Single<List<ConversationItem>>
 
 	fun getMoreConversationsList(): Single<List<ConversationItem>>
+	
+	fun getConversations(user: UserItem, cursorPosition: Int): Single<List<ConversationItem>>
 
 }

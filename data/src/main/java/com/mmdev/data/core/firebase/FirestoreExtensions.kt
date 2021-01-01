@@ -20,6 +20,7 @@ package com.mmdev.data.core.firebase
 
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Query
+import com.mmdev.data.core.MySchedulers
 import com.mmdev.data.core.log.logDebug
 import com.mmdev.data.core.log.logError
 import com.mmdev.data.core.log.logInfo
@@ -37,7 +38,7 @@ private const val TAG = "mylogs_FirestoreExtensions"
 const val FIRESTORE_NO_DOCUMENT_EXCEPTION = "No such document."
 
 internal fun <T> DocumentReference.getAndDeserializeAsSingle(clazz: Class<T>): Single<T> =
-	SingleCreate { emitter ->
+	SingleCreate<T> { emitter ->
 		get()
 			.addOnSuccessListener { snapshot ->
 				logInfo(TAG, "Document retrieve success")
@@ -59,10 +60,10 @@ internal fun <T> DocumentReference.getAndDeserializeAsSingle(clazz: Class<T>): S
 				logError(TAG, "Failed to retrieve document from backend: $exception")
 				emitter.onError(exception)
 			}
-	}
+	}.subscribeOn(MySchedulers.io())
 
 
-fun <T> Query.executeAndDeserializeSingle(clazz: Class<T>): Single<List<T>> = SingleCreate { emitter ->
+fun <T> Query.executeAndDeserializeSingle(clazz: Class<T>): Single<List<T>> = SingleCreate<List<T>> { emitter ->
 	logDebug(TAG, "Trying to execute given query...")
 	get()
 		.addOnSuccessListener { querySnapshot ->
@@ -86,7 +87,8 @@ fun <T> Query.executeAndDeserializeSingle(clazz: Class<T>): Single<List<T>> = Si
 			logError(TAG, "Failed to execute given query: $exception")
 			emitter.onError(exception)
 		}
-}
+}.subscribeOn(MySchedulers.io())
+
 
 
 
@@ -101,7 +103,7 @@ fun <T> DocumentReference.setAsCompletable(dataClass: T): Completable = Completa
 			emitter.onError(exception)
 		}
 		
-	}
+	}.subscribeOn(MySchedulers.io())
 
 
 fun DocumentReference.updateAsCompletable(field: String, value: Any): Completable = CompletableCreate { emitter ->
@@ -115,4 +117,4 @@ fun DocumentReference.updateAsCompletable(field: String, value: Any): Completabl
 			emitter.onError(exception)
 		}
 	
-}
+}.subscribeOn(MySchedulers.io())

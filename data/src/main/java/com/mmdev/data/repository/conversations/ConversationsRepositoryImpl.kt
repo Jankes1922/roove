@@ -24,8 +24,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.mmdev.business.conversations.ConversationItem
 import com.mmdev.business.conversations.ConversationsRepository
+import com.mmdev.business.user.UserItem
 import com.mmdev.data.core.BaseRepositoryImpl
 import com.mmdev.data.core.MySchedulers
+import com.mmdev.data.core.firebase.executeAndDeserializeSingle
 import com.mmdev.data.repository.user.UserWrapper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
@@ -39,10 +41,14 @@ import javax.inject.Singleton
  */
 
 @Singleton
-class ConversationsRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore,
-                                                      userWrapper: UserWrapper
-):
-		ConversationsRepository, BaseRepositoryImpl(firestore, userWrapper) {
+class ConversationsRepositoryImpl @Inject constructor(
+	private val fs: FirebaseFirestore,
+	userWrapper: UserWrapper
+): ConversationsRepository, BaseRepositoryImpl(fs, userWrapper) {
+	
+	companion object {
+		private const val USERS_COLLECTION = "users"
+	}
 
 	private var initialConversationsQuery: Query = currentUserDocRef
 		.collection(CONVERSATIONS_COLLECTION_REFERENCE)
@@ -54,11 +60,21 @@ class ConversationsRepositoryImpl @Inject constructor(private val firestore: Fir
 	private lateinit var paginateLastConversationLoaded: DocumentSnapshot
 	private lateinit var paginateConversationsQuery: Query
 
+	
+	private fun conversationsQuery(user: UserItem, cursorPosition: Int): Query = fs
+		.collection(USERS_COLLECTION)
+		.document(user.baseUserInfo.userId)
+		.collection(CONVERSATIONS_COLLECTION_REFERENCE)
+		.orderBy(CONVERSATION_TIMESTAMP_FIELD, Query.Direction.DESCENDING)
+		.whereEqualTo(CONVERSATION_STARTED_FIELD, true)
+		.limit(20)
+		.startAfter(cursorPosition)
+		
 
 	override fun deleteConversation(conversationItem: ConversationItem): Completable =
 		CompletableCreate { emitter ->
 
-			val partnerDocRef = firestore.collection(USERS_COLLECTION_REFERENCE)
+			val partnerDocRef = fs.collection(USERS_COLLECTION_REFERENCE)
 				.document(conversationItem.partner.city)
 				.collection(conversationItem.partner.gender)
 				.document(conversationItem.partner.userId)
@@ -106,17 +122,20 @@ class ConversationsRepositoryImpl @Inject constructor(private val firestore: Fir
 
 
 			//mark that conversation no need to be exists
-			firestore.collection(CONVERSATIONS_COLLECTION_REFERENCE)
+			fs.collection(CONVERSATIONS_COLLECTION_REFERENCE)
 				.document(conversationItem.conversationId)
 				.set(mapOf(CONVERSATION_DELETED_FIELD to true))
 				.addOnSuccessListener { emitter.onComplete() }
 				.addOnFailureListener { emitter.onError(it) }
 
 		}.subscribeOn(MySchedulers.io())
+	
+	override fun getConversations(user: UserItem, cursorPosition: Int): Single<List<ConversationItem>> =
+		conversationsQuery(user, cursorPosition)
+			.executeAndDeserializeSingle(ConversationItem::class.java)
 
 	override fun getConversationsList(): Single<List<ConversationItem>> =
 		Single.create(SingleOnSubscribe<List<ConversationItem>> { emitter ->
-			reInit()
 			initialConversationsQuery
 				.get()
 				.addOnSuccessListener {
@@ -158,13 +177,5 @@ class ConversationsRepositoryImpl @Inject constructor(private val firestore: Fir
 				}
 				.addOnFailureListener { emitter.onError(it) }
 		}).subscribeOn(MySchedulers.io())
-
-	override fun reInit() {
-		super.reInit()
-		initialConversationsQuery = currentUserDocRef
-			.collection(CONVERSATIONS_COLLECTION_REFERENCE)
-			.orderBy(CONVERSATION_TIMESTAMP_FIELD, Query.Direction.DESCENDING)
-			.whereEqualTo(CONVERSATION_STARTED_FIELD, true)
-			.limit(20)
-	}
+	
 }

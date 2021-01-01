@@ -18,6 +18,7 @@
 
 package com.mmdev.business.pairs
 
+import com.mmdev.business.user.UserItem
 import io.reactivex.rxjava3.core.Single
 
 /**
@@ -25,6 +26,8 @@ import io.reactivex.rxjava3.core.Single
  */
 
 interface PairsRepository {
+	
+	fun getPairs(user: UserItem, cursorPosition: Int): Single<List<MatchedUserItem>>
 
 	fun getMatchedUsersList(): Single<List<MatchedUserItem>>
 
