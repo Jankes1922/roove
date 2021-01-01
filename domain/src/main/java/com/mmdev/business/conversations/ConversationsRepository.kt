@@ -16,4 +16,21 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.conversations
+
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+
+/**
+ * This is the documentation block about the class
+ */
+
+interface ConversationsRepository {
+
+	fun deleteConversation(conversationItem: ConversationItem): Completable
+
+	fun getConversationsList(): Single<List<ConversationItem>>
+
+	fun getMoreConversationsList(): Single<List<ConversationItem>>
+
+}

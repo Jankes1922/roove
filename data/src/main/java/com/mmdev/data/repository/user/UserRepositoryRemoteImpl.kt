@@ -31,7 +31,7 @@ import com.mmdev.business.remote.Report
 import com.mmdev.business.user.BaseUserInfo
 import com.mmdev.business.user.UserItem
 import com.mmdev.data.core.BaseRepositoryImpl
-import com.mmdev.data.core.ExecuteSchedulers
+import com.mmdev.data.core.MySchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -116,7 +116,7 @@ class UserRepositoryRemoteImpl @Inject constructor(
 				.addOnSuccessListener { emitter.onComplete() }
 				.addOnFailureListener { emitter.onError(it) }
 
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	override fun deletePhoto(photoItem: PhotoItem, userItem: UserItem, isMainPhotoDeleting: Boolean): Completable =
 		CompletableCreate { emitter ->
@@ -148,7 +148,7 @@ class UserRepositoryRemoteImpl @Inject constructor(
 
 			emitter.onComplete()
 
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	override fun deleteMyself(): Completable =
 		CompletableCreate { emitter ->
@@ -232,7 +232,7 @@ class UserRepositoryRemoteImpl @Inject constructor(
 				likedListener.remove()
 				skippedListener.remove()
 			}
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 
 	override fun getRequestedUserItem(baseUserInfo: BaseUserInfo): Single<UserItem> =
@@ -248,7 +248,7 @@ class UserRepositoryRemoteImpl @Inject constructor(
 					}
 					.addOnFailureListener { emitter.onError(it) }
 			} else emitter.onSuccess(UserItem(BaseUserInfo("DELETED")))
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	override fun submitReport(report: Report): Completable =
 		CompletableCreate { emitter ->
@@ -258,7 +258,7 @@ class UserRepositoryRemoteImpl @Inject constructor(
 				.set(report)
 				.addOnSuccessListener { emitter.onComplete() }
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 
 	override fun updateUserItem(userItem: UserItem): Completable =
@@ -276,7 +276,7 @@ class UserRepositoryRemoteImpl @Inject constructor(
 						.addOnFailureListener { emitter.onError(it) }
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 
 	override fun uploadUserProfilePhoto(photoUri: String, userItem: UserItem): Observable<HashMap<Double, List<PhotoItem>>> =
@@ -311,5 +311,5 @@ class UserRepositoryRemoteImpl @Inject constructor(
 				}
 				.addOnFailureListener { emitter.onError(it) }
 			emitter.setCancellable { uploadTask.cancel() }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 }

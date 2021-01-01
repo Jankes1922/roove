@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,3 +102,17 @@ fun <T> DocumentReference.setAsCompletable(dataClass: T): Completable = Completa
 		}
 		
 	}
+
+
+fun DocumentReference.updateAsCompletable(field: String, value: Any): Completable = CompletableCreate { emitter ->
+	update(field, value)
+		.addOnSuccessListener {
+			logInfo(TAG, "Field $field updated with $value successfully")
+			emitter.onComplete()
+		}
+		.addOnFailureListener { exception ->
+			logError(TAG, "Field $field updated with $value error: $exception")
+			emitter.onError(exception)
+		}
+	
+}

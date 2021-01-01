@@ -16,4 +16,20 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.local
+
+import com.mmdev.business.user.UserItem
+
+/**
+ * This is the documentation block about the class
+ */
+
+interface LocalUserRepository {
+
+	fun clear()
+
+	fun getSavedUser(): UserItem?
+
+	fun saveUserInfo(userItem: UserItem)
+
+}

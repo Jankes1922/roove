@@ -30,11 +30,9 @@ import com.mmdev.roove.databinding.ActivityMainBinding
 import com.mmdev.roove.ui.auth.AuthViewModel
 import com.mmdev.roove.ui.auth.AuthViewModel.AuthenticationState.*
 import com.mmdev.roove.ui.profile.RemoteRepoViewModel
-import com.mmdev.roove.utils.UtilityManager
 import com.mmdev.roove.utils.extensions.observeOnce
 import com.mmdev.roove.utils.extensions.showToastText
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class MainActivity: AppCompatActivity() {
@@ -112,9 +110,9 @@ class MainActivity: AppCompatActivity() {
 
 		//start to listens auth status
 		authViewModel.checkIsAuthenticated()
-		for (i in 0 until Random.nextInt(5, 100)) {
-			UtilityManager.generateFakeUsers()
-		}
+		//for (i in 0 until Random.nextInt(5, 100)) {
+		//	UtilityManager.generateFakeUsers()
+		//}
 		
 
 		//note: debug

@@ -16,4 +16,22 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.remote
+
+import com.mmdev.business.user.BaseUserInfo
+import java.util.*
+
+/**
+ * reports data class
+ */
+
+data class Report(
+    val reportType: ReportType,
+    val reportedUser: BaseUserInfo,
+    val dateReported: Date = Date(),
+    var reportId: String = ""
+) {
+	enum class ReportType {
+		INELIGIBLE_PHOTOS, DISRESPECTFUL_BEHAVIOR, FAKE
+	}
+}

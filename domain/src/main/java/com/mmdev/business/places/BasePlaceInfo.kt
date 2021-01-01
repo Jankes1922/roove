@@ -16,4 +16,15 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.places
+
+/**
+ * This is the documentation block about the class
+ */
+
+@Deprecated("this api was removed, but still at server")
+data class BasePlaceInfo(
+    val id: Int = 0,
+    val short_title: String = "",
+    val imageUrl: String = ""
+)

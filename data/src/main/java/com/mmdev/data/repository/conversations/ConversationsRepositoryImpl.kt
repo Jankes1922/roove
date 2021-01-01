@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import com.google.firebase.firestore.Query
 import com.mmdev.business.conversations.ConversationItem
 import com.mmdev.business.conversations.ConversationsRepository
 import com.mmdev.data.core.BaseRepositoryImpl
-import com.mmdev.data.core.ExecuteSchedulers
+import com.mmdev.data.core.MySchedulers
 import com.mmdev.data.repository.user.UserWrapper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
@@ -112,7 +112,7 @@ class ConversationsRepositoryImpl @Inject constructor(private val firestore: Fir
 				.addOnSuccessListener { emitter.onComplete() }
 				.addOnFailureListener { emitter.onError(it) }
 
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	override fun getConversationsList(): Single<List<ConversationItem>> =
 		Single.create(SingleOnSubscribe<List<ConversationItem>> { emitter ->
@@ -135,7 +135,7 @@ class ConversationsRepositoryImpl @Inject constructor(private val firestore: Fir
 					else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}).subscribeOn(ExecuteSchedulers.io())
+		}).subscribeOn(MySchedulers.io())
 
 	override fun getMoreConversationsList(): Single<List<ConversationItem>> =
 		Single.create(SingleOnSubscribe<List<ConversationItem>> { emitter ->
@@ -157,7 +157,7 @@ class ConversationsRepositoryImpl @Inject constructor(private val firestore: Fir
 					else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}).subscribeOn(ExecuteSchedulers.io())
+		}).subscribeOn(MySchedulers.io())
 
 	override fun reInit() {
 		super.reInit()

@@ -28,6 +28,7 @@ android {
 
 	def globalConfiguration = rootProject.extensions.getByName("ext")
 	compileSdkVersion globalConfiguration["androidCompileSdkVersion"]
+	buildToolsVersion globalConfiguration["androidBuildToolsVersion"]
 
 
 	defaultConfig {
@@ -83,7 +84,7 @@ android {
 dependencies {
 
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
-	implementation project(':business')
+	implementation project(':domain')
 	implementation project(':data')
 
 	//core
@@ -113,7 +114,7 @@ dependencies {
 
 
 	//facebook auth
-	implementation libs.facebookLogin
+	implementation 'com.facebook.android:facebook-login:7.1.0'
 
 	//glide
 	implementation 'com.github.bumptech.glide:glide:4.11.0'
@@ -129,10 +130,10 @@ dependencies {
 	implementation "androidx.navigation:navigation-fragment-ktx:2.3.2"
 
 	// RxJava
-	implementation libs.rxJava
+	implementation "io.reactivex.rxjava3:rxjava:3.0.8"
 
 	// RxAndroid
-	implementation libs.rxAndroid
+	implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
 
 
 	// ViewModel and LiveData

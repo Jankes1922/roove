@@ -16,4 +16,19 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+apply plugin: 'kotlin'
+
+
+dependencies {
+	// Kotlin
+	implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+	// RxJava
+	implementation "io.reactivex.rxjava3:rxjava:3.0.8"
+
+}
+compileKotlin {
+	kotlinOptions {
+		jvmTarget = JavaVersion.VERSION_1_8
+	}
+}

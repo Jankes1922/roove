@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import com.mmdev.data.BuildConfig
  * Good enough to not use Timber or any other third-party loggers
  */
 
-interface DebugConfig {
+internal interface DebugConfig {
 	
 	val isEnabled: Boolean
 	val logger: MyLogger

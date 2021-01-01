@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +28,16 @@ import com.mmdev.business.auth.AuthRepository
 import com.mmdev.business.auth.AuthUserItem
 import com.mmdev.business.user.BaseUserInfo
 import com.mmdev.business.user.UserItem
+import com.mmdev.data.AuthCollector
 import com.mmdev.data.core.BaseRepositoryImpl
-import com.mmdev.data.core.ExecuteSchedulers
+import com.mmdev.data.core.MySchedulers
 import com.mmdev.data.repository.user.UserWrapper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.core.SingleOnSubscribe
+import io.reactivex.rxjava3.internal.operators.completable.CompletableCreate
+import io.reactivex.rxjava3.internal.operators.single.SingleCreate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,9 +55,11 @@ class AuthRepositoryImpl @Inject constructor(
 	private val firestore: FirebaseFirestore,
 	private val fbLogin: LoginManager,
 	private val userWrapper: UserWrapper
-):
-		AuthRepository, BaseRepositoryImpl(firestore, userWrapper) {
+): AuthRepository, BaseRepositoryImpl(firestore, userWrapper) {
 
+	private val authObservable = AuthCollector(auth).firebaseAuthObservable.map {
+		it.currentUser
+	}
 
 	companion object {
 		private const val USER_BASE_REGISTRATION_TOKENS_FIELD = "registrationTokens"
@@ -96,11 +100,12 @@ class AuthRepositoryImpl @Inject constructor(
 			}
 			auth.addAuthStateListener(authStateListener)
 			emitter.setCancellable { auth.removeAuthStateListener(authStateListener) }
-		}).subscribeOn(ExecuteSchedulers.io())
+		}).subscribeOn(MySchedulers.io())
 	}
+	
+	
 
-	override fun fetchUserInfo(): Single<UserItem> {
-		return Single.create(SingleOnSubscribe<UserItem> { emitter ->
+	override fun fetchUserInfo(): Single<UserItem> = SingleCreate<UserItem> { emitter ->
 
 			val refBase = firestore.collection(USERS_BASE_COLLECTION_REFERENCE)
 				.document(currentUserId)
@@ -128,8 +133,7 @@ class AuthRepositoryImpl @Inject constructor(
 
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}).subscribeOn(ExecuteSchedulers.io())
-	}
+		}.subscribeOn(MySchedulers.io())
 
 	override fun logOut(){
 		if (auth.currentUser != null) {
@@ -142,13 +146,13 @@ class AuthRepositoryImpl @Inject constructor(
 	override fun signIn(token: String): Single<HashMap<Boolean, BaseUserInfo>> =
 		signInWithFacebook(token)
 			.flatMap { checkAndRetrieveFullUser(it) }
-			.subscribeOn(ExecuteSchedulers.io())
+			.subscribeOn(MySchedulers.io())
 
 	/**
 	 * create new [UserItem] documents in db
 	 */
 	override fun registerUser(userItem: UserItem): Completable =
-		Completable.create { emitter ->
+		CompletableCreate { emitter ->
 			val authUserItem = AuthUserItem(userItem.baseUserInfo)
 			val ref = fillUserGeneralRef(userItem.baseUserInfo)
 			ref.set(userItem)
@@ -163,7 +167,7 @@ class AuthRepositoryImpl @Inject constructor(
 						}
 						.addOnFailureListener { emitter.onError(it) }
 				}.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 
 	/**
@@ -171,7 +175,7 @@ class AuthRepositoryImpl @Inject constructor(
 	 * creates a basic [BaseUserInfo] object based on public facebook profile
 	 */
 	private fun signInWithFacebook(token: String): Single<BaseUserInfo> =
-		Single.create(SingleOnSubscribe<BaseUserInfo> { emitter ->
+		SingleCreate<BaseUserInfo> { emitter ->
 			val credential = FacebookAuthProvider.getCredential(token)
 			auth.signInWithCredential(credential)
 				.addOnCompleteListener{
@@ -186,10 +190,10 @@ class AuthRepositoryImpl @Inject constructor(
 					else emitter.onError(Exception(it.exception))
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}).subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	private fun checkAndRetrieveFullUser(baseUserInfo: BaseUserInfo): Single<HashMap<Boolean, BaseUserInfo>> =
-		Single.create(SingleOnSubscribe<HashMap<Boolean, BaseUserInfo>> { emitter ->
+		SingleCreate<HashMap<Boolean, BaseUserInfo>> { emitter ->
 			firestore.collection(USERS_BASE_COLLECTION_REFERENCE)
 				.document(baseUserInfo.userId)
 				.get()
@@ -219,7 +223,7 @@ class AuthRepositoryImpl @Inject constructor(
 					else emitter.onSuccess(hashMapOf(true to baseUserInfo))
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}).subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 }
 

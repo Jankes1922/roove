@@ -16,4 +16,19 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.cards
+
+import com.mmdev.business.user.UserItem
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+
+
+interface CardsRepository {
+
+	fun addToSkipped(skippedUserItem: UserItem): Completable
+
+	fun checkMatch(likedUserItem: UserItem): Single<Boolean>
+
+	fun getUsersByPreferences(initialLoading: Boolean): Single<List<UserItem>>
+
+}

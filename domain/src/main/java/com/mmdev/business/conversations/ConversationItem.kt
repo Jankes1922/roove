@@ -16,4 +16,21 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.conversations
+
+import com.mmdev.business.user.BaseUserInfo
+import java.util.*
+
+/**
+ * This is the documentation block about the class
+ */
+
+data class ConversationItem(
+    val partner: BaseUserInfo = BaseUserInfo(),
+    val conversationId: String = "",
+    val conversationStarted: Boolean = false,
+    val lastMessageText: String = "",
+    val lastMessageTimestamp: Date? = Date(),
+    val partnerOnline: Boolean = false,
+    val unreadCount: Int = 0
+)

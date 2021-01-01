@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 package com.mmdev.roove.core.di.modules
 
+import com.google.firebase.auth.FirebaseAuth
 import com.mmdev.business.auth.AuthRepository
 import com.mmdev.business.cards.CardsRepository
 import com.mmdev.business.chat.ChatRepository
@@ -25,6 +26,7 @@ import com.mmdev.business.conversations.ConversationsRepository
 import com.mmdev.business.local.LocalUserRepository
 import com.mmdev.business.pairs.PairsRepository
 import com.mmdev.business.remote.RemoteUserRepository
+import com.mmdev.data.AuthCollector
 import com.mmdev.data.repository.auth.AuthRepositoryImpl
 import com.mmdev.data.repository.cards.CardsRepositoryImpl
 import com.mmdev.data.repository.chat.ChatRepositoryImpl
@@ -35,13 +37,17 @@ import com.mmdev.data.repository.user.UserRepositoryRemoteImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 class RepositoryModule {
-
+	
+	@Provides
+	@Singleton
+	fun authCollector(auth: FirebaseAuth): AuthCollector = AuthCollector(auth)
+	
 	@Provides
 	@Singleton
 	fun authRepository(repository: AuthRepositoryImpl): AuthRepository = repository

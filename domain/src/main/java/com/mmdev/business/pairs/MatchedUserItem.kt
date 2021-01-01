@@ -16,4 +16,12 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.pairs
+
+import com.mmdev.business.user.BaseUserInfo
+import java.util.*
+
+data class MatchedUserItem(val baseUserInfo: BaseUserInfo = BaseUserInfo(),
+                           val conversationStarted: Boolean = false,
+                           var conversationId: String = "",
+                           val matchedDate: Date = Date())

@@ -16,4 +16,13 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.auth
+
+import com.mmdev.business.user.BaseUserInfo
+
+/**
+ * This is the documentation block about the class
+ */
+
+data class AuthUserItem(val baseUserInfo: BaseUserInfo = BaseUserInfo(),
+                        val registrationTokens: List<String> = emptyList())

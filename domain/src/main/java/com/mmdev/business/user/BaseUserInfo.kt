@@ -16,4 +16,16 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.user
+
+/**
+ * This is the documentation block about the class
+ */
+
+data class BaseUserInfo(var name: String = "",
+                        var age: Int = 0,
+                        var city: String = "",
+                        var gender: String = "",
+                        var preferredGender: String = "",
+                        var mainPhotoUrl: String = "",
+                        var userId: String = "")

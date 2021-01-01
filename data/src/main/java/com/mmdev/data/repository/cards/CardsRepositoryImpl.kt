@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import com.mmdev.business.pairs.MatchedUserItem
 import com.mmdev.business.user.BaseUserInfo
 import com.mmdev.business.user.UserItem
 import com.mmdev.data.core.BaseRepositoryImpl
-import com.mmdev.data.core.ExecuteSchedulers
+import com.mmdev.data.core.MySchedulers
 import com.mmdev.data.repository.user.UserWrapper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
@@ -159,18 +159,18 @@ class CardsRepositoryImpl @Inject constructor(
 					}
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 	}
 
 	/* return filtered users list as Single */
 	override fun getUsersByPreferences(initialLoading: Boolean): Single<List<UserItem>> {
 		return if (initialLoading){
 			reInit()
-			zipLists().flatMap { getUsersCardsByPreferences(it) }.subscribeOn(ExecuteSchedulers.computation())
+			zipLists().flatMap { getUsersCardsByPreferences(it) }.subscribeOn(MySchedulers.computation())
 		}
 		else {
 			getUsersCardsByPreferences(excludingIds)
-				.subscribeOn(ExecuteSchedulers.computation())
+				.subscribeOn(MySchedulers.computation())
 
 		}
 	}
@@ -201,7 +201,7 @@ class CardsRepositoryImpl @Inject constructor(
 							   female: List<UserItem>,
 							   male: List<UserItem> -> return@BiFunction listOf(female, male).flatten()
 			           })
-				.subscribeOn(ExecuteSchedulers.computation())
+				.subscribeOn(MySchedulers.computation())
 
 		else SingleCreate<List<UserItem>> { emitter ->
 			specifiedCardsQuery
@@ -219,7 +219,7 @@ class CardsRepositoryImpl @Inject constructor(
 					} else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.computation())
+		}.subscribeOn(MySchedulers.computation())
 	}
 
 	private fun getAllMaleUsersCards(excludingIds: List<String>): Single<List<UserItem>> {
@@ -243,7 +243,7 @@ class CardsRepositoryImpl @Inject constructor(
 					} else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 	}
 
 	private fun getAllFemaleUsersCards(excludingIds: List<String>): Single<List<UserItem>> {
@@ -267,7 +267,7 @@ class CardsRepositoryImpl @Inject constructor(
 					} else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 	}
 
 
@@ -281,7 +281,7 @@ class CardsRepositoryImpl @Inject constructor(
 			           matches: List<String>,
 			           skipped: List<String> -> mergeLists(likes, matches, skipped)
 		           }
-		).subscribeOn(ExecuteSchedulers.computation())
+		).subscribeOn(MySchedulers.computation())
 
 	/* merge 3 lists of type <T> */
 	private fun <T> mergeLists(t1: List<T> = emptyList(),
@@ -305,7 +305,7 @@ class CardsRepositoryImpl @Inject constructor(
 					else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	/*
 	* GET MATCHED IDS LIST
@@ -324,7 +324,7 @@ class CardsRepositoryImpl @Inject constructor(
 					else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	/*
 	* GET SKIPPED USERS IDS LIST
@@ -343,7 +343,7 @@ class CardsRepositoryImpl @Inject constructor(
 					else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 
 	private fun addToExcludingIds(id: String) {

@@ -16,4 +16,18 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.pairs
+
+import io.reactivex.rxjava3.core.Single
+
+/**
+ * This is the documentation block about the class
+ */
+
+interface PairsRepository {
+
+	fun getMatchedUsersList(): Single<List<MatchedUserItem>>
+
+	fun getMoreMatchedUsersList(): Single<List<MatchedUserItem>>
+
+}

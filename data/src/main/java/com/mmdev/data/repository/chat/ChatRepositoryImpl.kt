@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import com.mmdev.business.chat.MessageItem
 import com.mmdev.business.conversations.ConversationItem
 import com.mmdev.business.data.PhotoItem
 import com.mmdev.data.core.BaseRepositoryImpl
-import com.mmdev.data.core.ExecuteSchedulers
+import com.mmdev.data.core.MySchedulers
 import com.mmdev.data.repository.user.UserWrapper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
@@ -117,7 +117,7 @@ class ChatRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
 					else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 	}
 
 	override fun loadMoreMessages(): Single<List<MessageItem>> =
@@ -142,7 +142,7 @@ class ChatRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
 					else emitter.onSuccess(emptyList())
 				}
 				.addOnFailureListener { emitter.onError(it) }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	override fun observeNewMessages(conversation: ConversationItem): Observable<MessageItem> {
 		super.reInit()
@@ -191,7 +191,7 @@ class ChatRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
 					.update(CONVERSATION_PARTNER_ONLINE_FIELD, false)
 				listener.remove()
 			}
-		}).subscribeOn(ExecuteSchedulers.io())
+		}).subscribeOn(MySchedulers.io())
 	}
 
 	override fun observePartnerOnline(conversationId: String): Observable<Boolean> =
@@ -215,7 +215,7 @@ class ChatRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
 					}
 				}
 			emitter.setCancellable { listener.remove() }
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 
 	override fun sendMessage(messageItem: MessageItem, emptyChat: Boolean?): Completable {
 		//Log.wtf("TAG", "is empty recieved? + $emptyChat")
@@ -237,7 +237,7 @@ class ChatRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
 				}
 				.addOnFailureListener { emitter.onError(it) }
 
-		}.subscribeOn(ExecuteSchedulers.io())
+		}.subscribeOn(MySchedulers.io())
 	}
 
 	override fun uploadMessagePhoto(photoUri: String, conversationId: String): Observable<PhotoItem> {
@@ -260,7 +260,7 @@ class ChatRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
 				}
 				.addOnFailureListener { emitter.onError(it) }
 			emitter.setCancellable { uploadTask.cancel() }
-		}).subscribeOn(ExecuteSchedulers.io())
+		}).subscribeOn(MySchedulers.io())
 	}
 
 	private fun updateStartedStatus(messageItem: MessageItem) {

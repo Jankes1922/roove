@@ -1,6 +1,6 @@
 /*
  * Created by Andrii Kovalchuk
- * Copyright (C) 2020. roove
+ * Copyright (C) 2021. roove
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import com.mmdev.data.core.log.MyLogger.Default
  * May be used to create a custom logging solution to override the [Default] behaviour.
  */
 
-interface MyLogger {
+internal interface MyLogger {
 	
 	/**
 	 * @param tag used to identify the source of a log message.

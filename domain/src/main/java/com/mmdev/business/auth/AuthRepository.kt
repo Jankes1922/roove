@@ -16,4 +16,25 @@
  * along with this program.  If not, see https://www.gnu.org/licenses
  */
 
-include ':app', ':domain', ':data'
+package com.mmdev.business.auth
+
+import com.mmdev.business.user.BaseUserInfo
+import com.mmdev.business.user.UserItem
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+
+
+interface AuthRepository {
+
+	fun isAuthenticatedListener(): Observable<Boolean>
+
+	fun fetchUserInfo(): Single<UserItem>
+
+	fun logOut()
+
+	fun registerUser(userItem: UserItem): Completable
+
+	fun signIn(token: String): Single<HashMap<Boolean, BaseUserInfo>>
+
+}
